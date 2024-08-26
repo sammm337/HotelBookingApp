@@ -3,7 +3,11 @@ const router = express.Router();
 const Booking = require('../models/bookings')
 const Room = require('../models/room');
 const { v4: uuidv4 } = require('uuid');
-const stripe = require('stripe')('sk_test_51PqxzNP7ED4WsSitlhpOoeIhUlePE2iCC44sVsw8u7BbCHGaUYoX6swjYMfbcjE2MqRXbxG8zhzjNXqNLDTUHGEh00n67o69f7')
+const dotenv = require('dotenv')
+dotenv.config()
+const stripe = require('stripe')(process.env.key)
+console.log(process.env.key)
+
 router.post('/bookroom', async (req, res) => {
     const { room, userid, fromdate, todate, totalAmt, total, token } = req.body
    
@@ -14,7 +18,6 @@ router.post('/bookroom', async (req, res) => {
         })
         const payment = await stripe.charges.create(
             {
-
                 amount: totalAmt * 100,
                 customer: customer.id,
                 currency: 'USD',
@@ -25,7 +28,6 @@ router.post('/bookroom', async (req, res) => {
             }
         )
         if (payment) {
-            
                 const newbooking = new Booking({
                     room: room.name,
                     roomid: room._id,
@@ -48,7 +50,6 @@ router.post('/bookroom', async (req, res) => {
                     userid: userid,
                     status: booking.status
                 })
-
                 await roomtemp.save()
             
            
