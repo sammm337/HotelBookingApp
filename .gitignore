@@ -1,0 +1,3 @@
+node_modules
+*.rtf
+package-lock.json 
